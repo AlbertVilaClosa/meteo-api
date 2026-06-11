@@ -31,13 +31,15 @@ jobs:
 
       - name: Configurar Git
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+            git config --global user.name "github-actions[bot]"
+            git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Afegir i commitar JSON
         run: |
-          git add temp_*.json
-          git commit -m "Afegit fitxer de temperatures del dia $(date +'%Y-%m-%d')" || echo "No hi ha canvis per commitar"
+            git add temp_*.json
+            git commit -m "Afegit fitxer de temperatures del dia $(date +'%Y-%m-%d')" || echo "No hi ha canvis per commitar"
 
-      - name: Pujar canvis
-        run: git push
+      - name: Sincronitzar i pujar canvis
+        run: |
+            git pull --rebase origin main
+            git push origin main
