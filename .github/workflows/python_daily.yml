@@ -1,38 +1,43 @@
 name: Obtenir Temperatures Diàriament
 
+permissions:
+  contents: write
+
 on:
   schedule:
-    # Executa cada dia a les 23:59
     - cron: '59 23 * * *'
-  workflow_dispatch:  # Permet executar manualment
+  workflow_dispatch:
 
 jobs:
   run-python:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Clonar repositori
-      uses: actions/checkout@v4
+      - name: Clonar repositori
+        uses: actions/checkout@v4
 
-    - name: Configurar Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.11'
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
 
-    - name: Instal·lar dependències
-      run: |
-        python -m pip install --upgrade pip
-        pip install requests
+      - name: Instal·lar dependències
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
 
-    - name: Executar script Python
-      run: python temps.py
+      - name: Executar script Python
+        run: python temps.py
 
-    - name: Afegir i pujar JSON
-      run: |
-        git config --global user.name "github-actions[bot]"
-        git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git add temp_*.json
-        git commit -m "Afegit fitxer de temperatures del dia $(date +'%Y-%m-%d')" || echo "No hi ha canvis per commitar"
-        git push
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Configurar Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Afegir i commitar JSON
+        run: |
+          git add temp_*.json
+          git commit -m "Afegit fitxer de temperatures del dia $(date +'%Y-%m-%d')" || echo "No hi ha canvis per commitar"
+
+      - name: Pujar canvis
+        run: git push
